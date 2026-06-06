@@ -1,8 +1,8 @@
 pyrogram==1.4.16
-py-tgcalls==0.9.7
 python-dotenv==1.0.0
 PyMongo==4.6.1
 requests==2.31.0
 Pillow==10.1.0
 aiohttp==3.9.1
+yt-dlp==2024.1.1
 psutil==5.9.6
