@@ -1,9 +1,10 @@
 import logging
 import sys
+import asyncio
 from pyrogram import Client, idle
 from config import Config
-from database.mongo_db import init_db
-import asyncio
+from database import db
+import start, music, admin, auth, moderation, broadcast, management, callbacks
 
 logging.basicConfig(
     level=logging.INFO,
@@ -23,22 +24,30 @@ async def main():
     try:
         await app.start()
         logger.info("⚡ Soft X Vibes Music Bot Started Successfully!")
+        
         me = await app.get_me()
         logger.info(f"✨ Bot Running as: @{me.username}")
-        
-        await init_db()
         
         try:
             await app.send_message(Config.LOGGER_ID, "⚡ **Soft X Vibes Music Bot Started**\n\n✨ Bot is Online and Ready!")
         except:
             pass
         
+        logger.info("📊 Bot initialization completed!")
         await idle()
+        
     except Exception as e:
-        logger.error(f"Error: {e}")
+        logger.error(f"❌ Error: {e}")
         sys.exit(1)
     finally:
         await app.stop()
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        logger.info("Bot stopped by user")
+        sys.exit(0)
+    except Exception as e:
+        logger.error(f"Fatal error: {e}")
+        sys.exit(1)
