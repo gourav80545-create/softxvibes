@@ -7,3 +7,4 @@ aiohttp==3.9.1
 yt-dlp==2024.12.6
 psutil==6.0.0
 flask==3.0.0
+tgcrypto==1.2.5
