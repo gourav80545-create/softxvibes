@@ -1,0 +1,15 @@
+services:
+  - type: worker
+    name: softx-vibes-bot
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python bot.py
+    envVars:
+      - key: API_ID
+        scope: runtime
+      - key: API_HASH
+        scope: runtime
+      - key: BOT_TOKEN
+        scope: runtime
+      - key: MONGO_DB_URI
+        scope: runtime
