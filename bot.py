@@ -1,7 +1,7 @@
 import logging
 import sys
-import subprocess
-import time as time_module
+import time
+import ntplib
 from pyrogram import Client, idle
 from config import Config
 from database import db
@@ -11,23 +11,34 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
+
 logger = logging.getLogger(__name__)
 
 app = Client(
-    "SoftXVibesBot",
+    name="SoftXVibesBot",
     api_id=Config.API_ID,
     api_hash=Config.API_HASH,
     bot_token=Config.BOT_TOKEN,
 )
 
+def sync_time():
+    """Sync system time using NTP to avoid Pyrogram time sync errors"""
+    try:
+        logger.info("Syncing system time with NTP server...")
+        ntp_client = ntplib.NTPClient()
+        response = ntp_client.request('pool.ntp.org')
+        logger.info(f"Time synced successfully. Offset: {response.offset} seconds")
+        time.sleep(2)  # Give time for sync to take effect
+    except Exception as e:
+        logger.warning(f"Could not sync time via NTP: {e}")
+        logger.info("Continuing with system time...")
+        time.sleep(3)  # Extra delay to allow system time to stabilize
+
 def main():
     try:
-        try:
-            subprocess.run(["ntpdate", "-b", "pool.ntp.org"], capture_output=True, timeout=5)
-        except:
-            pass
+        # Sync time before starting bot to avoid Pyrogram time sync errors
+        sync_time()
         
-        time_module.sleep(2)
         app.start()
         logger.info("⚡ Soft X Vibes Music Bot Started Successfully!")
         
