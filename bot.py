@@ -7,10 +7,12 @@ from datetime import datetime
 from pyrogram import Client, idle
 from config import Config
 from database import db
-import start, music, admin, auth, moderation, broadcast, management, callbacks
 from flask import Flask
 from threading import Thread
 import os
+
+# Import handlers AFTER creating the client
+# This ensures decorators register with the correct client instance
 
 logging.basicConfig(
     level=logging.INFO,
@@ -32,15 +34,20 @@ def health():
 
 def run_flask():
     port = int(os.environ.get('PORT', 8080))
-    flask_app.run(host='0.0.0.0', port=port)
+    flask_app.run(host='0.0.0.0', port=port, use_reloader=False, threaded=True)
 
 app = Client(
     "SoftXVibesBot",
     api_id=Config.API_ID,
     api_hash=Config.API_HASH,
     bot_token=Config.BOT_TOKEN,
-    workdir="/tmp"  # Use /tmp for session files
+    workdir="/tmp",  # Use /tmp for session files
+    in_memory=True  # Use in-memory session to avoid file permission issues
 )
+
+# Import handlers AFTER creating the client
+# This ensures decorators register with the correct client instance
+import start, music, admin, auth, moderation, broadcast, management, callbacks
 
 def sync_time():
     """Sync system time using NTP to avoid Pyrogram time sync errors"""
@@ -83,12 +90,6 @@ def sync_time():
 
 def main():
     try:
-        # Start Flask server in a separate thread for Render port binding
-        flask_thread = Thread(target=run_flask)
-        flask_thread.daemon = True
-        flask_thread.start()
-        logger.info("Flask server started on port %s", os.environ.get('PORT', 8080))
-        
         # Sync time before starting bot to avoid Pyrogram time sync errors
         sync_time()
         
@@ -107,6 +108,12 @@ def main():
                         raise
                 else:
                     raise
+        
+        # Start Flask server in a separate thread for Render port binding
+        flask_thread = Thread(target=run_flask)
+        flask_thread.daemon = True
+        flask_thread.start()
+        logger.info("Flask server started on port %s", os.environ.get('PORT', 8080))
         
         me = app.get_me()
         logger.info(f"✨ Bot Running as: @{me.username}")
