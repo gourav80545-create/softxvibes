@@ -39,8 +39,7 @@ app = Client(
     api_id=Config.API_ID,
     api_hash=Config.API_HASH,
     bot_token=Config.BOT_TOKEN,
-    workdir="/tmp",  # Use /tmp for session files
-    no_updates=True  # Skip time sync check by not listening for updates initially
+    workdir="/tmp"  # Use /tmp for session files
 )
 
 def sync_time():
