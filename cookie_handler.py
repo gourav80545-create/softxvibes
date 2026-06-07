@@ -1,11 +1,11 @@
 import asyncio
 import requests
-from pathlib import Path
 from urllib.parse import urlsplit
 
 from config import COOKIE_URL
 
-COOKIE_PATH = Path("cookies.txt")
+# Global variable to store cookies in memory
+COOKIES_CACHE = None
 
 
 def _extract_paste_id(url: str) -> str:
@@ -29,10 +29,13 @@ def resolve_raw_cookie_url(url: str) -> str:
     return url
 
 
-async def fetch_and_store_cookies():
+async def fetch_cookies():
+    """Fetch cookies from URL and store in memory"""
+    global COOKIES_CACHE
+    
     if not COOKIE_URL:
         print("⚠️ COOKIE_URL not set in environment.")
-        return False
+        return None
 
     raw_url = resolve_raw_cookie_url(COOKIE_URL)
 
@@ -46,22 +49,23 @@ async def fetch_and_store_cookies():
         response.raise_for_status()
     except Exception as e:
         print(f"⚠️ Can't fetch cookies: {e}")
-        return False
+        return None
 
     cookies = (response.text or "").strip()
 
     if not cookies.startswith("# Netscape"):
         print("⚠️ Invalid cookie format. Needs Netscape format.")
-        return False
+        return None
 
     if len(cookies) < 100:
         print("⚠️ Cookie content too short. Possibly invalid.")
-        return False
+        return None
 
-    try:
-        COOKIE_PATH.write_text(cookies, encoding="utf-8")
-        print(f"✅ Cookies saved to {COOKIE_PATH}")
-        return True
-    except Exception as e:
-        print(f"⚠️ Failed to save cookies: {e}")
-        return False
+    COOKIES_CACHE = cookies
+    print(f"✅ Cookies fetched and stored in memory")
+    return cookies
+
+
+def get_cookies():
+    """Get cookies from cache"""
+    return COOKIES_CACHE
