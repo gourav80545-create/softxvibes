@@ -1,6 +1,7 @@
-from pyrogram import Client, filters
+from pyrogram import filters
 from config import Config
 from database import db
+from client import app
 
 def is_owner(func):
     async def wrapper(client, message):
@@ -10,14 +11,14 @@ def is_owner(func):
         return await func(client, message)
     return wrapper
 
-@Client.on_message(filters.command("addadmin"))
+@app.on_message(filters.command("addadmin"))
 @is_owner
 async def add_admin(client, message):
     user_id = message.reply_to_message.from_user.id
     await db.admins.insert_one({"_id": user_id})
     await message.reply_text(f"✅ Admin added!")
 
-@Client.on_message(filters.command("adminlist"))
+@app.on_message(filters.command("adminlist"))
 async def admin_list(client, message):
     admins = await db.admins.find().to_list(None)
     text = "👮 ADMINS:\n\n"
