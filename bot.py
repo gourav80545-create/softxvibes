@@ -93,6 +93,15 @@ def sync_time():
 
 def main():
     try:
+        # Start Flask server FIRST for Render port binding
+        flask_thread = Thread(target=run_flask)
+        flask_thread.daemon = True
+        flask_thread.start()
+        logger.info("Flask server started on port %s", os.environ.get('PORT', 8080))
+        
+        # Give Flask time to bind to port
+        time.sleep(2)
+        
         # Sync time before starting bot to avoid Pyrogram time sync errors
         sync_time()
         
@@ -113,12 +122,6 @@ def main():
                         raise
                 else:
                     raise
-        
-        # Start Flask server in a separate thread for Render port binding
-        flask_thread = Thread(target=run_flask)
-        flask_thread.daemon = True
-        flask_thread.start()
-        logger.info("Flask server started on port %s", os.environ.get('PORT', 8080))
         
         try:
             me = app.get_me()
