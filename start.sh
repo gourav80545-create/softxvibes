@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Remove any existing session files to force fresh connection
+rm -f SoftXVibesBot.session SoftXVibesBot.session-journal
+
 # Sync time with NTP before starting the bot
 echo "Syncing system time with NTP..."
 ntpdate -s time.google.com || ntpdate -s pool.ntp.org || ntpdate -s time.cloudflare.com || echo "NTP sync failed, continuing with system time"
@@ -21,7 +24,7 @@ fi
 
 # Wait for time to stabilize
 echo "Waiting for time to stabilize..."
-sleep 20
+sleep 30
 
 # Start the bot
 echo "Starting bot..."
