@@ -1,6 +1,7 @@
-from pyrogram import Client, filters
+from pyrogram import filters
 from config import Config
 from database import db
+from client import app
 
 def is_owner(func):
     async def wrapper(client, message):
@@ -10,14 +11,14 @@ def is_owner(func):
         return await func(client, message)
     return wrapper
 
-@Client.on_message(filters.command("auth"))
+@app.on_message(filters.command("auth"))
 @is_owner
 async def auth(client, message):
     user_id = message.reply_to_message.from_user.id
     await db.users.update_one({"_id": user_id}, {"$set": {"authorized": True}})
     await message.reply_text(f"✅ Authorized!")
 
-@Client.on_message(filters.command("authusers"))
+@app.on_message(filters.command("authusers"))
 @is_owner
 async def auth_users(client, message):
     users = await db.users.find({"authorized": True}).to_list(None)
