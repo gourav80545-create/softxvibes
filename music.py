@@ -4,7 +4,7 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from config import Config
 from database import db
 from client import app
-from cookie_handler import COOKIE_PATH, fetch_and_store_cookies
+from cookie_handler import get_cookies
 import yt_dlp
 import asyncio
 
@@ -27,12 +27,13 @@ def get_yt_dlp_options():
         options['password'] = Config.SPOTIFY_PASSWORD
         options['default_search'] = 'spsearch'  # Use Spotify search when credentials are available
     
-    # Add YouTube cookies from file if available
-    if COOKIE_PATH.exists():
-        options['cookiefile'] = str(COOKIE_PATH)
-        logger.info(f"Using cookies from {COOKIE_PATH}")
+    # Add YouTube cookies from memory if available
+    cookies = get_cookies()
+    if cookies:
+        options['cookiefile'] = cookies  # yt-dlp can accept cookie string
+        logger.info("Using cookies from memory")
     
-    # Fallback to YOUTUBE_COOKIES if file doesn't exist
+    # Fallback to YOUTUBE_COOKIES if memory cache is empty
     elif Config.YOUTUBE_COOKIES:
         options['http_headers'] = {
             'Cookie': Config.YOUTUBE_COOKIES,
