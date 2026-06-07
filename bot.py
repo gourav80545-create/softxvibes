@@ -3,6 +3,7 @@ import sys
 import time
 import ntplib
 import requests
+import asyncio
 from datetime import datetime
 from pyrogram import idle, filters
 from config import Config
@@ -44,6 +45,13 @@ import start, music, admin, auth, moderation, broadcast, management, callbacks
 
 # Log that handlers have been imported
 logger.info("Handler modules imported successfully")
+
+# Log registered handlers count
+try:
+    handler_count = len(app.handlers)
+    logger.info(f"Registered handlers count: {handler_count}")
+except Exception as e:
+    logger.error(f"Error getting handler count: {e}")
 
 # Add a simple test handler to verify handler registration
 @app.on_message(filters.command("test"))
