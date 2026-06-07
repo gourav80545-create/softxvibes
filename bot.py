@@ -41,7 +41,53 @@ def run_flask():
 
 # Import handlers AFTER creating the client
 # This ensures decorators register with the correct client instance
-import start, music, admin, auth, moderation, broadcast, management, callbacks
+try:
+    import start
+    logger.info("start module imported")
+except Exception as e:
+    logger.error(f"Error importing start: {e}")
+
+try:
+    import music
+    logger.info("music module imported")
+except Exception as e:
+    logger.error(f"Error importing music: {e}")
+
+try:
+    import admin
+    logger.info("admin module imported")
+except Exception as e:
+    logger.error(f"Error importing admin: {e}")
+
+try:
+    import auth
+    logger.info("auth module imported")
+except Exception as e:
+    logger.error(f"Error importing auth: {e}")
+
+try:
+    import moderation
+    logger.info("moderation module imported")
+except Exception as e:
+    logger.error(f"Error importing moderation: {e}")
+
+try:
+    import broadcast
+    logger.info("broadcast module imported")
+except Exception as e:
+    logger.error(f"Error importing broadcast: {e}")
+
+try:
+    import management
+    logger.info("management module imported")
+except Exception as e:
+    logger.error(f"Error importing management: {e}")
+
+try:
+    import callbacks
+    logger.info("callbacks module imported")
+except Exception as e:
+    logger.error(f"Error importing callbacks: {e}")
 
 # Log that handlers have been imported
 logger.info("Handler modules imported successfully")
