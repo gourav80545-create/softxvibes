@@ -1,13 +1,14 @@
 import logging
-from pyrogram import Client, filters
+from pyrogram import filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from config import Config, Messages, HelpTexts
 from database import db
+from client import app
 
 logger = logging.getLogger(__name__)
 
-@Client.on_message(filters.command("start"))
-async def start_handler(client: Client, message):
+@app.on_message(filters.command("start"))
+async def start_handler(client, message):
     try:
         user_id = message.from_user.id
         username = message.from_user.username or "Unknown"
@@ -30,8 +31,8 @@ async def start_handler(client: Client, message):
     except Exception as e:
         logger.error(f"Error: {e}")
 
-@Client.on_callback_query(filters.regex("help"))
-async def help_handler(client: Client, callback_query):
+@app.on_callback_query(filters.regex("help"))
+async def help_handler(client, callback_query):
     try:
         keyboard = InlineKeyboardMarkup([
             [
@@ -53,56 +54,56 @@ async def help_handler(client: Client, callback_query):
     except Exception as e:
         logger.error(f"Error: {e}")
 
-@Client.on_callback_query(filters.regex("help_admin"))
-async def help_admin(client: Client, callback_query):
+@app.on_callback_query(filters.regex("help_admin"))
+async def help_admin(client, callback_query):
     try:
         keyboard = InlineKeyboardMarkup([[InlineKeyboardButton("⬅️ Back", callback_data="help")]])
         await callback_query.edit_message_text(HelpTexts.ADMIN, reply_markup=keyboard)
     except Exception as e:
         logger.error(f"Error: {e}")
 
-@Client.on_callback_query(filters.regex("help_auth"))
-async def help_auth(client: Client, callback_query):
+@app.on_callback_query(filters.regex("help_auth"))
+async def help_auth(client, callback_query):
     try:
         keyboard = InlineKeyboardMarkup([[InlineKeyboardButton("⬅️ Back", callback_data="help")]])
         await callback_query.edit_message_text(HelpTexts.AUTH, reply_markup=keyboard)
     except Exception as e:
         logger.error(f"Error: {e}")
 
-@Client.on_callback_query(filters.regex("help_broadcast"))
-async def help_broadcast(client: Client, callback_query):
+@app.on_callback_query(filters.regex("help_broadcast"))
+async def help_broadcast(client, callback_query):
     try:
         keyboard = InlineKeyboardMarkup([[InlineKeyboardButton("⬅️ Back", callback_data="help")]])
         await callback_query.edit_message_text(HelpTexts.BROADCAST, reply_markup=keyboard)
     except Exception as e:
         logger.error(f"Error: {e}")
 
-@Client.on_callback_query(filters.regex("help_music"))
-async def help_music(client: Client, callback_query):
+@app.on_callback_query(filters.regex("help_music"))
+async def help_music(client, callback_query):
     try:
         keyboard = InlineKeyboardMarkup([[InlineKeyboardButton("⬅️ Back", callback_data="help")]])
         await callback_query.edit_message_text(HelpTexts.MUSIC, reply_markup=keyboard)
     except Exception as e:
         logger.error(f"Error: {e}")
 
-@Client.on_callback_query(filters.regex("help_mod"))
-async def help_mod(client: Client, callback_query):
+@app.on_callback_query(filters.regex("help_mod"))
+async def help_mod(client, callback_query):
     try:
         keyboard = InlineKeyboardMarkup([[InlineKeyboardButton("⬅️ Back", callback_data="help")]])
         await callback_query.edit_message_text(HelpTexts.MODERATION, reply_markup=keyboard)
     except Exception as e:
         logger.error(f"Error: {e}")
 
-@Client.on_callback_query(filters.regex("help_mgmt"))
-async def help_mgmt(client: Client, callback_query):
+@app.on_callback_query(filters.regex("help_mgmt"))
+async def help_mgmt(client, callback_query):
     try:
         keyboard = InlineKeyboardMarkup([[InlineKeyboardButton("⬅️ Back", callback_data="help")]])
         await callback_query.edit_message_text(HelpTexts.MANAGEMENT, reply_markup=keyboard)
     except Exception as e:
         logger.error(f"Error: {e}")
 
-@Client.on_callback_query(filters.regex("start"))
-async def back_start(client: Client, callback_query):
+@app.on_callback_query(filters.regex("start"))
+async def back_start(client, callback_query):
     try:
         keyboard = InlineKeyboardMarkup([
             [
