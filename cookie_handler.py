@@ -2,7 +2,10 @@ import asyncio
 import requests
 from urllib.parse import urlsplit
 
-from config import COOKIE_URL
+try:
+    from config import COOKIE_URL
+except ImportError:
+    COOKIE_URL = ""
 
 # Global variable to store cookies in memory
 COOKIES_CACHE = None
