@@ -2,6 +2,8 @@ import logging
 import sys
 import time
 import ntplib
+import requests
+from datetime import datetime
 from pyrogram import Client, idle
 from config import Config
 from database import db
@@ -30,21 +32,35 @@ def sync_time():
         'time.nist.gov'
     ]
     
+    # Try NTP sync first
     for server in ntp_servers:
         try:
             logger.info(f"Syncing system time with NTP server: {server}...")
             ntp_client = ntplib.NTPClient()
             response = ntp_client.request(server, version=3, timeout=5)
             logger.info(f"Time synced successfully with {server}. Offset: {response.offset} seconds")
-            time.sleep(5)  # Give time for sync to take effect
+            time.sleep(10)  # Give time for sync to take effect
             return
         except Exception as e:
             logger.warning(f"Failed to sync with {server}: {e}")
             continue
     
-    logger.warning("Could not sync time with any NTP server")
+    # Fallback to HTTP time sync
+    logger.warning("Could not sync time with any NTP server, trying HTTP time sync...")
+    try:
+        response = requests.head('http://google.com', timeout=5)
+        http_time = response.headers.get('Date')
+        if http_time:
+            logger.info(f"Got HTTP time: {http_time}")
+            # Just log it, we can't set system time from Python
+            time.sleep(15)
+            return
+    except Exception as e:
+        logger.warning(f"HTTP time sync failed: {e}")
+    
+    logger.warning("Could not sync time with any method")
     logger.info("Adding extra delay to allow system time to stabilize...")
-    time.sleep(10)  # Extra delay to allow system time to stabilize
+    time.sleep(30)  # Extra delay to allow system time to stabilize
 
 def main():
     try:
