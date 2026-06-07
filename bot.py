@@ -4,12 +4,13 @@ import time
 import ntplib
 import requests
 from datetime import datetime
-from pyrogram import Client, idle, filters
+from pyrogram import idle, filters
 from config import Config
 from database import db
 from flask import Flask
 from threading import Thread
 import os
+from client import app
 
 # Import handlers AFTER creating the client
 # This ensures decorators register with the correct client instance
@@ -35,15 +36,6 @@ def health():
 def run_flask():
     port = int(os.environ.get('PORT', 8080))
     flask_app.run(host='0.0.0.0', port=port, use_reloader=False, threaded=True)
-
-app = Client(
-    "SoftXVibesBot",
-    api_id=Config.API_ID,
-    api_hash=Config.API_HASH,
-    bot_token=Config.BOT_TOKEN,
-    workdir="/tmp",  # Use /tmp for session files
-    in_memory=True  # Use in-memory session to avoid file permission issues
-)
 
 # Import handlers AFTER creating the client
 # This ensures decorators register with the correct client instance
