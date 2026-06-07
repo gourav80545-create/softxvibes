@@ -1,6 +1,7 @@
-from pyrogram import Client, filters
+from pyrogram import filters
 from config import Config
 from database import db
+from client import app
 
 def is_owner(func):
     async def wrapper(client, message):
@@ -10,7 +11,7 @@ def is_owner(func):
         return await func(client, message)
     return wrapper
 
-@Client.on_message(filters.command("gban"))
+@app.on_message(filters.command("gban"))
 @is_owner
 async def gban(client, message):
     user_id = message.reply_to_message.from_user.id
@@ -18,7 +19,7 @@ async def gban(client, message):
     await db.ban_user(user_id, reason)
     await message.reply_text(f"🚫 Banned!")
 
-@Client.on_message(filters.command("bluser"))
+@app.on_message(filters.command("bluser"))
 @is_owner
 async def bluser(client, message):
     user_id = message.reply_to_message.from_user.id
