@@ -4,7 +4,9 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from config import Config
 from database import db
 from client import app
+from cookie_handler import COOKIE_PATH, fetch_and_store_cookies
 import yt_dlp
+import asyncio
 
 logger = logging.getLogger(__name__)
 
@@ -16,15 +18,27 @@ def get_yt_dlp_options():
         'no_warnings': True,
         'geo_bypass': True,
         'socket_timeout': 30,
-        'default_search': 'ytsearch',
+        'default_search': 'ytsearch',  # Default to YouTube search
     }
     
-    # Add cookies if available
-    if Config.YOUTUBE_COOKIES:
+    # Add Spotify credentials if available
+    if Config.SPOTIFY_USERNAME and Config.SPOTIFY_PASSWORD:
+        options['username'] = Config.SPOTIFY_USERNAME
+        options['password'] = Config.SPOTIFY_PASSWORD
+        options['default_search'] = 'spsearch'  # Use Spotify search when credentials are available
+    
+    # Add YouTube cookies from file if available
+    if COOKIE_PATH.exists():
+        options['cookiefile'] = str(COOKIE_PATH)
+        logger.info(f"Using cookies from {COOKIE_PATH}")
+    
+    # Fallback to YOUTUBE_COOKIES if file doesn't exist
+    elif Config.YOUTUBE_COOKIES:
         options['http_headers'] = {
             'Cookie': Config.YOUTUBE_COOKIES,
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
         }
+        logger.info("Using YOUTUBE_COOKIES from environment")
     
     return options
 
