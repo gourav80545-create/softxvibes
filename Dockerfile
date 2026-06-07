@@ -1,8 +1,12 @@
 FROM python:3.11-slim
 
-RUN apt-get update && apt-get install -y ffmpeg git curl
+RUN apt-get update && apt-get install -y ffmpeg git curl ntpdate
 WORKDIR /app
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 COPY . .
-CMD ["python", "bot.py"]
+
+# Make start script executable
+RUN chmod +x start.sh
+
+CMD ["./start.sh"]
