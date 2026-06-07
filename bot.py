@@ -11,7 +11,7 @@ from flask import Flask
 from threading import Thread
 import os
 from client import app
-from cookie_handler import fetch_and_store_cookies
+from cookie_handler import fetch_cookies
 
 # Import handlers AFTER creating the client
 # This ensures decorators register with the correct client instance
@@ -106,7 +106,7 @@ def main():
         # Fetch cookies if COOKIE_URL is set
         if Config.COOKIE_URL:
             logger.info("Fetching cookies from COOKIE_URL...")
-            asyncio.run(fetch_and_store_cookies())
+            asyncio.run(fetch_cookies())
         
         # Sync time before starting bot to avoid Pyrogram time sync errors
         sync_time()
