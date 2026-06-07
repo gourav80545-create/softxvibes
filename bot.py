@@ -8,6 +8,9 @@ from pyrogram import Client, idle
 from config import Config
 from database import db
 import start, music, admin, auth, moderation, broadcast, management, callbacks
+from flask import Flask
+from threading import Thread
+import os
 
 logging.basicConfig(
     level=logging.INFO,
@@ -15,6 +18,21 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger(__name__)
+
+# Flask app for Render port binding
+flask_app = Flask(__name__)
+
+@flask_app.route('/')
+def home():
+    return "Bot is running!"
+
+@flask_app.route('/health')
+def health():
+    return {"status": "ok"}, 200
+
+def run_flask():
+    port = int(os.environ.get('PORT', 8080))
+    flask_app.run(host='0.0.0.0', port=port)
 
 app = Client(
     "SoftXVibesBot",
@@ -66,6 +84,12 @@ def sync_time():
 
 def main():
     try:
+        # Start Flask server in a separate thread for Render port binding
+        flask_thread = Thread(target=run_flask)
+        flask_thread.daemon = True
+        flask_thread.start()
+        logger.info("Flask server started on port %s", os.environ.get('PORT', 8080))
+        
         # Sync time before starting bot to avoid Pyrogram time sync errors
         sync_time()
         
