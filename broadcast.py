@@ -1,6 +1,7 @@
-from pyrogram import Client, filters
+from pyrogram import filters
 from config import Config
 from database import db
+from client import app
 
 def is_owner(func):
     async def wrapper(client, message):
@@ -10,7 +11,7 @@ def is_owner(func):
         return await func(client, message)
     return wrapper
 
-@Client.on_message(filters.command("broadcast"))
+@app.on_message(filters.command("broadcast"))
 @is_owner
 async def broadcast(client, message):
     if not message.reply_to_message:
