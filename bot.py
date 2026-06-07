@@ -49,6 +49,9 @@ app = Client(
 # This ensures decorators register with the correct client instance
 import start, music, admin, auth, moderation, broadcast, management, callbacks
 
+# Log registered handlers for debugging
+logger.info(f"Registered handlers count: {len(app.handlers)}")
+
 def sync_time():
     """Sync system time using NTP to avoid Pyrogram time sync errors"""
     ntp_servers = [
@@ -97,10 +100,12 @@ def main():
         max_retries = 3
         for attempt in range(max_retries):
             try:
+                logger.info("Attempting to start bot...")
                 app.start()
                 logger.info("⚡ Soft X Vibes Music Bot Started Successfully!")
                 break
             except Exception as e:
+                logger.error(f"Bot start error: {e}")
                 if "msg_id is too low" in str(e):
                     logger.warning(f"Time sync error on attempt {attempt + 1}/{max_retries}, retrying...")
                     time.sleep(30)  # Wait longer before retry
@@ -115,15 +120,19 @@ def main():
         flask_thread.start()
         logger.info("Flask server started on port %s", os.environ.get('PORT', 8080))
         
-        me = app.get_me()
-        logger.info(f"✨ Bot Running as: @{me.username}")
+        try:
+            me = app.get_me()
+            logger.info(f"✨ Bot Running as: @{me.username}")
+        except Exception as e:
+            logger.error(f"Error getting bot info: {e}")
         
         try:
             app.send_message(Config.LOGGER_ID, "⚡ **Soft X Vibes Music Bot Started**\n\n✨ Bot is Online and Ready!")
-        except:
-            pass
+        except Exception as e:
+            logger.warning(f"Could not send startup message: {e}")
         
         logger.info("📊 Bot initialization completed!")
+        logger.info("Bot is now idle and waiting for messages...")
         idle()
         
     except Exception as e:
