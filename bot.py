@@ -4,7 +4,7 @@ import time
 import ntplib
 import requests
 from datetime import datetime
-from pyrogram import Client, idle
+from pyrogram import Client, idle, filters
 from config import Config
 from database import db
 from flask import Flask
@@ -51,6 +51,14 @@ import start, music, admin, auth, moderation, broadcast, management, callbacks
 
 # Log that handlers have been imported
 logger.info("Handler modules imported successfully")
+
+# Add a simple test handler to verify handler registration
+@app.on_message(filters.command("test"))
+async def test_handler(client, message):
+    await message.reply_text("Test handler is working!")
+    logger.info("Test handler triggered!")
+
+logger.info("Test handler registered")
 
 def sync_time():
     """Sync system time using NTP to avoid Pyrogram time sync errors"""
