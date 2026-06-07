@@ -1,12 +1,12 @@
 import logging
-from pymongo import MongoClient
+from motor.motor_asyncio import AsyncIOMotorClient
 from config import Config
 
 logger = logging.getLogger(__name__)
 
 class MongoDB:
     def __init__(self):
-        self.client = MongoClient(Config.MONGO_DB_URI)
+        self.client = AsyncIOMotorClient(Config.MONGO_DB_URI)
         self.db = self.client['softx_vibes']
         self.users = self.db['users']
         self.chats = self.db['chats']
