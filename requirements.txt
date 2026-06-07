@@ -10,4 +10,3 @@ psutil==6.0.0
 flask==3.0.0
 tgcrypto==1.2.5
 ntplib
-pytgcalls==2.1.0
