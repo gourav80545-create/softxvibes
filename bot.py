@@ -21,6 +21,8 @@ app = Client(
     api_id=Config.API_ID,
     api_hash=Config.API_HASH,
     bot_token=Config.BOT_TOKEN,
+    workdir="/tmp",  # Use /tmp for session files
+    no_updates=True  # Skip time sync check by not listening for updates initially
 )
 
 def sync_time():
@@ -67,8 +69,21 @@ def main():
         # Sync time before starting bot to avoid Pyrogram time sync errors
         sync_time()
         
-        app.start()
-        logger.info("⚡ Soft X Vibes Music Bot Started Successfully!")
+        # Try to start the bot with retry logic
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                app.start()
+                logger.info("⚡ Soft X Vibes Music Bot Started Successfully!")
+                break
+            except Exception as e:
+                if "msg_id is too low" in str(e):
+                    logger.warning(f"Time sync error on attempt {attempt + 1}/{max_retries}, retrying...")
+                    time.sleep(30)  # Wait longer before retry
+                    if attempt == max_retries - 1:
+                        raise
+                else:
+                    raise
         
         me = app.get_me()
         logger.info(f"✨ Bot Running as: @{me.username}")
