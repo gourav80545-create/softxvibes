@@ -1,8 +1,9 @@
 import logging
-from pyrogram import Client, filters
+from pyrogram import filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from config import Config
 from database import db
+from client import app
 import yt_dlp
 
 logger = logging.getLogger(__name__)
@@ -27,7 +28,7 @@ def get_yt_dlp_options():
     
     return options
 
-@Client.on_message(filters.command("play"))
+@app.on_message(filters.command("play"))
 async def play(client, message: Message):
     try:
         user_id = message.from_user.id
@@ -111,27 +112,27 @@ async def play(client, message: Message):
         logger.error(f"Play error: {e}")
         await message.reply_text(f"❌ Error: {str(e)}")
 
-@Client.on_message(filters.command("vplay"))
+@app.on_message(filters.command("vplay"))
 async def vplay(client, message: Message):
     await message.reply_text("🎬 Video play coming soon!")
 
-@Client.on_message(filters.command("pause"))
+@app.on_message(filters.command("pause"))
 async def pause(client, message: Message):
     await message.reply_text("⏸ Music paused!")
 
-@Client.on_message(filters.command("resume"))
+@app.on_message(filters.command("resume"))
 async def resume(client, message: Message):
     await message.reply_text("▶️ Music resumed!")
 
-@Client.on_message(filters.command("skip"))
+@app.on_message(filters.command("skip"))
 async def skip(client, message: Message):
     await message.reply_text("⏭ Skipped to next song!")
 
-@Client.on_message(filters.command("stop"))
+@app.on_message(filters.command("stop"))
 async def stop(client, message: Message):
     await message.reply_text("⏹ Music stopped!")
 
-@Client.on_message(filters.command("queue"))
+@app.on_message(filters.command("queue"))
 async def queue_cmd(client, message: Message):
     await message.reply_text("""📜 **QUEUE**
 
@@ -142,26 +143,26 @@ async def queue_cmd(client, message: Message):
 ✨ Total: 3 songs
 ⏱ Total Duration: 11:15""")
 
-@Client.on_message(filters.command("shuffle"))
+@app.on_message(filters.command("shuffle"))
 async def shuffle(client, message: Message):
     await message.reply_text("🔀 Queue shuffled!")
 
-@Client.on_message(filters.command("seek"))
+@app.on_message(filters.command("seek"))
 async def seek(client, message: Message):
     if len(message.text.split()) < 2:
         await message.reply_text("❌ Usage: /seek <seconds>")
         return
     await message.reply_text(f"⏩ Seeking...")
 
-@Client.on_message(filters.command("loop"))
+@app.on_message(filters.command("loop"))
 async def loop_cmd(client, message: Message):
     await message.reply_text("🔁 Loop enabled!")
 
-@Client.on_message(filters.command("speed"))
+@app.on_message(filters.command("speed"))
 async def speed(client, message: Message):
     await message.reply_text("⚡ Speed controls available!")
 
-@Client.on_message(filters.command("song"))
+@app.on_message(filters.command("song"))
 async def song(client, message: Message):
     await message.reply_text(f"""🎵 **CURRENT SONG**
 
@@ -172,13 +173,13 @@ async def song(client, message: Message):
 
 {Config.DEVELOPER_CREDIT}""")
 
-@Client.on_message(filters.command("lyrics"))
+@app.on_message(filters.command("lyrics"))
 async def lyrics(client, message: Message):
     if len(message.text.split()) < 2:
         await message.reply_text("❌ Usage: /lyrics <song_name>")
         return
     await message.reply_text("📝 Fetching lyrics...")
 
-@Client.on_message(filters.command("playlist"))
+@app.on_message(filters.command("playlist"))
 async def playlist(client, message: Message):
     await message.reply_text("🎵 Playlist feature coming soon!")
