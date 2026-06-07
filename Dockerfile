@@ -9,4 +9,7 @@ COPY . .
 # Make start script executable
 RUN chmod +x start.sh
 
+# Install systemd-timesyncd for better time sync
+RUN apt-get update && apt-get install -y systemd-timesyncd || true
+
 CMD ["./start.sh"]
