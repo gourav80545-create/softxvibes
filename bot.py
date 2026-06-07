@@ -49,8 +49,8 @@ app = Client(
 # This ensures decorators register with the correct client instance
 import start, music, admin, auth, moderation, broadcast, management, callbacks
 
-# Log registered handlers for debugging
-logger.info(f"Registered handlers count: {len(app.handlers)}")
+# Log that handlers have been imported
+logger.info("Handler modules imported successfully")
 
 def sync_time():
     """Sync system time using NTP to avoid Pyrogram time sync errors"""
