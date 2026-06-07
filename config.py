@@ -34,6 +34,20 @@ class Config:
     # YouTube Cookies (Optional)
     YOUTUBE_COOKIES = os.getenv("YOUTUBE_COOKIES", "")
     
+    # Cookie URL (Required for cookies from pastebin/batbin)
+    COOKIE_URL = os.getenv("COOKIE_URL", "")
+    
+    # Spotify Credentials (Optional)
+    SPOTIFY_USERNAME = os.getenv("SPOTIFY_USERNAME", "")
+    SPOTIFY_PASSWORD = os.getenv("SPOTIFY_PASSWORD", "")
+    
+    # Assistant Session Strings (Optional - for VC join)
+    STRING1 = os.getenv("STRING_SESSION", "")
+    STRING2 = os.getenv("STRING_SESSION2", "")
+    STRING3 = os.getenv("STRING_SESSION3", "")
+    STRING4 = os.getenv("STRING_SESSION4", "")
+    STRING5 = os.getenv("STRING_SESSION5", "")
+    
     # Streaming Quality
     QUALITY = "high"
     AUDIO_QUALITY = "high"
