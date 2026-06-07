@@ -23,16 +23,28 @@ app = Client(
 
 def sync_time():
     """Sync system time using NTP to avoid Pyrogram time sync errors"""
-    try:
-        logger.info("Syncing system time with NTP server...")
-        ntp_client = ntplib.NTPClient()
-        response = ntp_client.request('pool.ntp.org')
-        logger.info(f"Time synced successfully. Offset: {response.offset} seconds")
-        time.sleep(2)  # Give time for sync to take effect
-    except Exception as e:
-        logger.warning(f"Could not sync time via NTP: {e}")
-        logger.info("Continuing with system time...")
-        time.sleep(3)  # Extra delay to allow system time to stabilize
+    ntp_servers = [
+        'pool.ntp.org',
+        'time.google.com',
+        'time.cloudflare.com',
+        'time.nist.gov'
+    ]
+    
+    for server in ntp_servers:
+        try:
+            logger.info(f"Syncing system time with NTP server: {server}...")
+            ntp_client = ntplib.NTPClient()
+            response = ntp_client.request(server, version=3, timeout=5)
+            logger.info(f"Time synced successfully with {server}. Offset: {response.offset} seconds")
+            time.sleep(5)  # Give time for sync to take effect
+            return
+        except Exception as e:
+            logger.warning(f"Failed to sync with {server}: {e}")
+            continue
+    
+    logger.warning("Could not sync time with any NTP server")
+    logger.info("Adding extra delay to allow system time to stabilize...")
+    time.sleep(10)  # Extra delay to allow system time to stabilize
 
 def main():
     try:
